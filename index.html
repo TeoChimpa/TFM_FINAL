@@ -1,0 +1,2459 @@
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/MarkerCluster.css">
+        <link rel="stylesheet" href="css/MarkerCluster.Default.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <link rel="stylesheet" href="css/leaflet-sidebar.css"/>
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        body{background-color:#2ECCFA;}
+        h1{text-indent: 25pt; font-size:xx-large; font-family: 'Liberation'; font-style: bold; font: sans-serif; color: white; text-shadow: 1px 1px #000000;}
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <h1>SIGAncoa</h1>
+        <div id="map">
+        </div>
+        <div id="sidebar" class="sidebar collapsed">
+<!-- Nav tabs -->
+<div class="sidebar-tabs">
+    <ul role="tablist">
+        <li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li>
+        <li><a href="#contacto" role="tab"><i class="fa fa-photo"></i></a></li>
+        <li><a href="#info" role="tab"><i class="fa fa-info-circle"></i></a></li>
+        <li><a href="#github" role="tab" target="_blank"><i class="fa fa-github"></i></a></li>
+    </ul>
+
+    <ul role="tablist">
+        <li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li>
+    </ul>
+</div>
+
+<!-- Tab panes -->
+<div class="sidebar-content">
+    <div class="sidebar-pane" id="home">
+        <h1 class="sidebar-header">INFORMACIÓN<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+        <p>Este visor es producto de un Trabajo Final de Master del Magister en Geoinformática y Análisis Geoespacial de la Universidad del País Vasco. Es un proyecto autónomo creado de forma autodidacta por el el adminitrador y habitante del cajón del Río Ancoa, Teo Rodelas.</p>
+        <div class="" id="control-descripcion">
+        </div>
+    </div>
+
+    <div class="sidebar-pane" id="info">
+        <h1 class="sidebar-header">DESCRIPCION SIGAncoa<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+
+        <p>Visor Web de Mapas del Cajón del Río Ancoa</p>
+
+        <p class="lorem">Los visores web de mapas interactivos son cada vez más frecuentes, ya que muestran información geográfica de territorios concretos de forma sencilla y comunicativa para todo tipo de usuarios. El visor web SIGAncoa es un visor de mapas interactivos emplazado y delimitado por la cuenca del Río Ancoa (Comuna de Linares, Región del Maule, Chile), donde se pueden visualizar datos geoespaciales descargados y actualizados de diferentes bases de datos institucionales (IDE Chile – BCN), y datos capturados y recopilados en trabajos de campo y relatos orales de los habitantes del sector. Este servicio es proporcionado gracias a las técnicas y herramientas provenientes del Web Mapping; desde la creación y visualización de los datos geoespaciales en el software de Sistema de Información Geográfica (SIG) QGIS, la exportación de la información con el complemento QGIS2Web; y la adecuación del código de programación con los lenguajes HTML, CSS, JavaScipt y su librería especializada de Leaflet. En definitiva,  se construye la estructura para visualizar e interactuar con datos geoespaciales del cajón del Río Ancoa en el servidor web del usuario, cumpliendo con requisitos de usabilidad y accesibilidad. </p>
+    </div>
+        <div class="sidebar-pane" id="contacto">
+        <h1 class="sidebar-header">CONTACTO<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+       <p>Si usted es un usuario con ganas de participar en este proyecto y además conocedor del sector, puede fomentar a que este visor mejores y actualice su contenido. Por lo que, si quiere comunicar alguna rrecomendación o mejora, incluso si quiere añadir elementos geográficos en el visor contacta con el siguiente correo electrónico.
+       </p>
+              <p class="lorem">Contactese con: teo.rodelas.sanchez@hotmail.com </p>
+        <div class="" id="control-contacto">
+        </div>
+    </div>
+</div>
+</div>
+<div class="sidebar-map",  id="map"></div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/leaflet-providers.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/proj4.js"></script>
+        <script src="js/proj4leaflet.js"></script>
+        <script src="js/leaflet.markercluster.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="js/leaflet-sidebar.js"></script>
+        <script src="js/L.Control.MousePosition.js"></script>
+        <script src="js/leaflet-simple-map-screenshoter.js"></script>
+        <script src="https://unpkg.com/file-saver/dist/FileSaver.js"></script>
+        <script src="https://unpkg.com/togeojson@0.16.0"></script>
+        <script src="https://unpkg.com/leaflet-filelayer@1.2.0"></script>
+        <script src="js/leaflet.wms.js"></script>
+        <script src="data/CURVASDENIVEL100m_0.js"></script>
+        <script src="data/CATASTROUSO_1.js"></script>
+        <script src="data/CATASTRONOTHOFAGUS_2.js"></script>
+        <script src="data/CUENCARIOANCOA_3.js"></script>
+        <script src="data/LMITESCOMUNALES_4.js"></script>
+        <script src="data/RESERVANACIONALBELLOTOSDELMELADO_5.js"></script>
+        <script src="data/SITIOSPRIORIDADSNASPE_6.js"></script>
+        <script src="data/SENDEROS_7.js"></script>
+        <script src="data/Senderos_WP_8.js"></script>
+        <script src="data/FAUNAYBIODIVERSIDAD_9.js"></script>
+        <script src="data/HIDROGRAFA_10.js"></script>
+        <script src="data/MASASLACUSTRES_11.js"></script>
+        <script src="data/INFRAESTRUCTURACANALES_12.js"></script>
+        <script src="data/REDVIARIA_13.js"></script>
+        <script src="data/Servicios_SIGANCOA_14.js"></script>
+        <script src="data/Equipamientos_SIGANCOA_15.js"></script>
+        <script src="data/INFRAESTRUCTURADOH_16.js"></script>
+        <script src="data/TOPONIMIAS_17.js"></script>
+        <script>
+        var crs = new L.Proj.CRS('EPSG:9155', '+proj=utm +zone=19 +south +ellps=GRS80 +units=m +no_defs', {
+            resolutions: [2800, 1400, 700, 350, 175, 84, 42, 21, 11.2, 5.6, 2.8, 1.4, 0.7, 0.35, 0.14, 0.07],
+        });
+        var map = L.map('map', {
+            crs: crs,
+            continuousWorld: false,
+            worldCopyJump: false, 
+            zoomControl:true, maxZoom:25, minZoom:1
+        }).fitBounds([[-36.00001128339318,-71.47344199457058],[-35.81483140334899,-71.1140685417955]]);
+
+       var Propiedades_Rurales_CIREN = L.tileLayer.wms("https://esri.ciren.cl/server/services/IDEMINAGRI/PROPIEDADES_RURALES/MapServer/WMSServer", {
+       layers: "<![CDATA[ REGIÓN MAULE (CIREN 2014) ]]>",
+       format: 'image/png',
+       version: '1.3.0',//wms version (ver get capabilities)
+       attribution: "<![CDATA[ IDEMINAGRI_PROPIEDADES_RURALES ]]>"}).addTo(map);
+        var Esri_WorldImagery = L.tileLayer.provider('Esri.WorldImagery').addTo(map);
+        var Stamen_Terrain = L.tileLayer.provider('Stamen.Terrain').addTo(map);
+        var sidebar = L.control.sidebar('sidebar', {position:'right', closeButton:'true', autoPan:'true'}).addTo(map);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        L.control.scale().addTo(map);
+        L.control.mousePosition().addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        function pop_CURVASDENIVEL100m_0(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID'] !== null ? autolinker.link(feature.properties['ID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ELEV</th>\
+                        <td>' + (feature.properties['ELEV'] !== null ? autolinker.link(feature.properties['ELEV'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">CUENCA</th>\
+                        <td>' + (feature.properties['CUENCA'] !== null ? autolinker.link(feature.properties['CUENCA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_CURVASDENIVEL100m_0_0() {
+            return {
+                pane: 'pane_CURVASDENIVEL100m_0',
+                opacity: 1,
+                color: 'rgba(126,126,126,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_CURVASDENIVEL100m_0');
+        map.getPane('pane_CURVASDENIVEL100m_0').style.zIndex = 400;
+        map.getPane('pane_CURVASDENIVEL100m_0').style['mix-blend-mode'] = 'normal';
+        var layer_CURVASDENIVEL100m_0 = new L.geoJson(json_CURVASDENIVEL100m_0, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_CURVASDENIVEL100m_0',
+            layerName: 'layer_CURVASDENIVEL100m_0',
+            pane: 'pane_CURVASDENIVEL100m_0',
+            onEachFeature: pop_CURVASDENIVEL100m_0,
+            style: style_CURVASDENIVEL100m_0_0,
+        });
+        bounds_group.addLayer(layer_CURVASDENIVEL100m_0);
+        function pop_CATASTROUSO_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ID_USO</th>\
+                        <td>' + (feature.properties['ID_USO'] !== null ? autolinker.link(feature.properties['ID_USO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">USO</th>\
+                        <td>' + (feature.properties['USO'] !== null ? autolinker.link(feature.properties['USO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TIPO FORES</th>\
+                        <td>' + (feature.properties['TIPO FORES'] !== null ? autolinker.link(feature.properties['TIPO FORES'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SUBTIP FOR</th>\
+                        <td>' + (feature.properties['SUBTIP FOR'] !== null ? autolinker.link(feature.properties['SUBTIP FOR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ESPECIE 1</th>\
+                        <td>' + (feature.properties['ESPECIE 1'] !== null ? autolinker.link(feature.properties['ESPECIE 1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ESPECIE 2</th>\
+                        <td>' + (feature.properties['ESPECIE 2'] !== null ? autolinker.link(feature.properties['ESPECIE 2'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">REGION</th>\
+                        <td>' + (feature.properties['REGION'] !== null ? autolinker.link(feature.properties['REGION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">COMUNA</th>\
+                        <td>' + (feature.properties['COMUNA'] !== null ? autolinker.link(feature.properties['COMUNA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SUP (ha)</th>\
+                        <td>' + (feature.properties['SUP (ha)'] !== null ? autolinker.link(feature.properties['SUP (ha)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FUENTE</th>\
+                        <td>' + (feature.properties['FUENTE'] !== null ? autolinker.link(feature.properties['FUENTE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_CATASTROUSO_1_0(feature) {
+            switch(String(feature.properties['USO'])) {
+                case 'Afloramientos Rocosos':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(234,55,64,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bosque Nativo Achaparrado Abierto':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(215,191,30,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bosque Nativo Achaparrado Denso':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(163,85,222,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bosque Nativo Achaparrado Semidenso':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(56,187,216,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bosque Nativo Adulto Denso':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(230,170,16,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bosque Nativo Adulto-Renoval Denso':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(219,57,141,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bosque Nativo Adulto-Renoval Semidenso':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(103,14,227,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bosque Nativo con Exóticas Asilvestradas Denso':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(212,113,43,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bosque Nativo con Exóticas Asilvestradas Semidenso':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(230,233,19,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bosque Nativo Renoval Abierto':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(166,239,127,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bosque Nativo Renoval Denso':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(73,23,210,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bosque Nativo Renoval Semidenso':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(216,79,234,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bosque Nativo-Plantaciónn Semidenso':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(240,107,63,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cajas de Rí­os':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(19,62,233,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Ciudades, Pueblos, Zonas Industriales':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(181,212,118,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Corridas de Lavas y Escoriales':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(209,60,90,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Derrumbe sin Vegetación':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(201,225,93,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Estepa Andina Central':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(87,70,213,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Lagos, Lagunas, Embalses, Tranques':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(89,131,210,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Matorral Abierto':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(138,229,149,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Matorral Arborescente Abierto':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(136,227,188,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Matorral Arborescente Denso':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(229,30,223,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Matorral Arborescente Semidenso':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(167,57,210,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Matorral Denso':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(63,199,203,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Matorral Semidenso':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(185,229,137,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Matorral-Pradera Abierto':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(48,219,199,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Matorral-Pradera Semidenso':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(227,92,202,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Minería Industrial':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(214,51,160,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Nieves':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(53,170,233,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Otros sin Vegetación':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(205,129,30,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Plantación Adulta':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(204,97,85,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Plantación con Exóticas Asilvestradas':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(74,82,226,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Plantación Joven o Recién Cosechada':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(25,221,18,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Praderas Perennes':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(51,231,183,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Ríos':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(103,234,138,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Rotación Cultivo-Pradera':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(132,214,112,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Terreno de Uso Agrí­cola':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(220,97,140,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Terreno sobre el Lí­mite Altitudinal de la Vegetación':
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(54,229,127,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_CATASTROUSO_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(38,120,202,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_CATASTROUSO_1');
+        map.getPane('pane_CATASTROUSO_1').style.zIndex = 401;
+        map.getPane('pane_CATASTROUSO_1').style['mix-blend-mode'] = 'normal';
+        var layer_CATASTROUSO_1 = new L.geoJson(json_CATASTROUSO_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_CATASTROUSO_1',
+            layerName: 'layer_CATASTROUSO_1',
+            pane: 'pane_CATASTROUSO_1',
+            onEachFeature: pop_CATASTROUSO_1,
+            style: style_CATASTROUSO_1_0,
+        });
+        bounds_group.addLayer(layer_CATASTROUSO_1);
+        function pop_CATASTRONOTHOFAGUS_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ID_USO</th>\
+                        <td>' + (feature.properties['ID_USO'] !== null ? autolinker.link(feature.properties['ID_USO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">USO</th>\
+                        <td>' + (feature.properties['USO'] !== null ? autolinker.link(feature.properties['USO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ESTRUCTURA</th>\
+                        <td>' + (feature.properties['ESTRUCTURA'] !== null ? autolinker.link(feature.properties['ESTRUCTURA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">COBERTURA</th>\
+                        <td>' + (feature.properties['COBERTURA'] !== null ? autolinker.link(feature.properties['COBERTURA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ESPECIE 1</th>\
+                        <td>' + (feature.properties['ESPECIE 1'] !== null ? autolinker.link(feature.properties['ESPECIE 1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">REGION</th>\
+                        <td>' + (feature.properties['REGION'] !== null ? autolinker.link(feature.properties['REGION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">COMUNA</th>\
+                        <td>' + (feature.properties['COMUNA'] !== null ? autolinker.link(feature.properties['COMUNA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SUP (Ha)</th>\
+                        <td>' + (feature.properties['SUP (Ha)'] !== null ? autolinker.link(feature.properties['SUP (Ha)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FUENTE</th>\
+                        <td>' + (feature.properties['FUENTE'] !== null ? autolinker.link(feature.properties['FUENTE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NOMBRE</th>\
+                        <td>' + (feature.properties['NOMBRE'] !== null ? autolinker.link(feature.properties['NOMBRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_CATASTRONOTHOFAGUS_2_0(feature) {
+            switch(String(feature.properties['ESPECIE 1'])) {
+                case 'Nothofagus alpina':
+                    return {
+                pane: 'pane_CATASTRONOTHOFAGUS_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(0,0,4,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Nothofagus dombeyi':
+                    return {
+                pane: 'pane_CATASTRONOTHOFAGUS_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(59,15,111,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Nothofagus glauca':
+                    return {
+                pane: 'pane_CATASTRONOTHOFAGUS_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(140,41,129,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Nothofagus obliqua':
+                    return {
+                pane: 'pane_CATASTRONOTHOFAGUS_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(222,73,105,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Nothofagus pumilio':
+                    return {
+                pane: 'pane_CATASTRONOTHOFAGUS_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(254,159,109,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_CATASTRONOTHOFAGUS_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(252,253,191,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_CATASTRONOTHOFAGUS_2');
+        map.getPane('pane_CATASTRONOTHOFAGUS_2').style.zIndex = 402;
+        map.getPane('pane_CATASTRONOTHOFAGUS_2').style['mix-blend-mode'] = 'normal';
+        var layer_CATASTRONOTHOFAGUS_2 = new L.geoJson(json_CATASTRONOTHOFAGUS_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_CATASTRONOTHOFAGUS_2',
+            layerName: 'layer_CATASTRONOTHOFAGUS_2',
+            pane: 'pane_CATASTRONOTHOFAGUS_2',
+            onEachFeature: pop_CATASTRONOTHOFAGUS_2,
+            style: style_CATASTRONOTHOFAGUS_2_0,
+        });
+        bounds_group.addLayer(layer_CATASTRONOTHOFAGUS_2);
+        function pop_CUENCARIOANCOA_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">COD_CUEN</th>\
+                        <td>' + (feature.properties['COD_CUEN'] !== null ? autolinker.link(feature.properties['COD_CUEN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COD_SUBC'] !== null ? autolinker.link(feature.properties['COD_SUBC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COD_SSUBC'] !== null ? autolinker.link(feature.properties['COD_SSUBC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NOM_SSUBC</th>\
+                        <td>' + (feature.properties['NOM_SSUBC'] !== null ? autolinker.link(feature.properties['NOM_SSUBC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Area_km2</th>\
+                        <td>' + (feature.properties['Area_km2'] !== null ? autolinker.link(feature.properties['Area_km2'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Area(ha)</th>\
+                        <td>' + (feature.properties['Area(ha)'] !== null ? autolinker.link(feature.properties['Area(ha)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FUENTE</th>\
+                        <td>' + (feature.properties['FUENTE'] !== null ? autolinker.link(feature.properties['FUENTE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_CUENCARIOANCOA_3_0() {
+            return {
+                pane: 'pane_CUENCARIOANCOA_3',
+                opacity: 1,
+                color: 'rgba(228,26,28,1.0)',
+                dashArray: '10,5,1,5',
+                lineCap: 'round',
+                lineJoin: 'round',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_CUENCARIOANCOA_3');
+        map.getPane('pane_CUENCARIOANCOA_3').style.zIndex = 403;
+        map.getPane('pane_CUENCARIOANCOA_3').style['mix-blend-mode'] = 'normal';
+        var layer_CUENCARIOANCOA_3 = new L.geoJson(json_CUENCARIOANCOA_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_CUENCARIOANCOA_3',
+            layerName: 'layer_CUENCARIOANCOA_3',
+            pane: 'pane_CUENCARIOANCOA_3',
+            onEachFeature: pop_CUENCARIOANCOA_3,
+            style: style_CUENCARIOANCOA_3_0,
+        });
+        bounds_group.addLayer(layer_CUENCARIOANCOA_3);
+        map.addLayer(layer_CUENCARIOANCOA_3);
+        function pop_LMITESCOMUNALES_4(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['objectid'] !== null ? autolinker.link(feature.properties['objectid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['cod_comuna'] !== null ? autolinker.link(feature.properties['cod_comuna'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">REGION</th>\
+                        <td>' + (feature.properties['REGION'] !== null ? autolinker.link(feature.properties['REGION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NOMBRE</th>\
+                        <td>' + (feature.properties['NOMBRE'] !== null ? autolinker.link(feature.properties['NOMBRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PROVINCIA</th>\
+                        <td>' + (feature.properties['PROVINCIA'] !== null ? autolinker.link(feature.properties['PROVINCIA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">AREA(Km2)</th>\
+                        <td>' + (feature.properties['AREA(Km2)'] !== null ? autolinker.link(feature.properties['AREA(Km2)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FUENTE</th>\
+                        <td>' + (feature.properties['FUENTE'] !== null ? autolinker.link(feature.properties['FUENTE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_LMITESCOMUNALES_4_0() {
+            return {
+                pane: 'pane_LMITESCOMUNALES_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_LMITESCOMUNALES_4');
+        map.getPane('pane_LMITESCOMUNALES_4').style.zIndex = 404;
+        map.getPane('pane_LMITESCOMUNALES_4').style['mix-blend-mode'] = 'normal';
+        var layer_LMITESCOMUNALES_4 = new L.geoJson(json_LMITESCOMUNALES_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_LMITESCOMUNALES_4',
+            layerName: 'layer_LMITESCOMUNALES_4',
+            pane: 'pane_LMITESCOMUNALES_4',
+            onEachFeature: pop_LMITESCOMUNALES_4,
+            style: style_LMITESCOMUNALES_4_0,
+        });
+        bounds_group.addLayer(layer_LMITESCOMUNALES_4);
+        function pop_RESERVANACIONALBELLOTOSDELMELADO_5(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">TIPO</th>\
+                        <td>' + (feature.properties['TIPO'] !== null ? autolinker.link(feature.properties['TIPO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NOMBRE</th>\
+                        <td>' + (feature.properties['NOMBRE'] !== null ? autolinker.link(feature.properties['NOMBRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">REGIÓN</th>\
+                        <td>' + (feature.properties['REGIÓN'] !== null ? autolinker.link(feature.properties['REGIÓN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">COMUNA</th>\
+                        <td>' + (feature.properties['COMUNA'] !== null ? autolinker.link(feature.properties['COMUNA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DECRETO</th>\
+                        <td>' + (feature.properties['DECRETO'] !== null ? autolinker.link(feature.properties['DECRETO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">AREA(Km2)</th>\
+                        <td>' + (feature.properties['AREA(Km2)'] !== null ? autolinker.link(feature.properties['AREA(Km2)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FECHA</th>\
+                        <td>' + (feature.properties['FECHA'] !== null ? autolinker.link(feature.properties['FECHA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FUENTE</th>\
+                        <td>' + (feature.properties['FUENTE'] !== null ? autolinker.link(feature.properties['FUENTE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_RESERVANACIONALBELLOTOSDELMELADO_5_0() {
+            return {
+                pane: 'pane_RESERVANACIONALBELLOTOSDELMELADO_5',
+                opacity: 1,
+                color: 'rgba(1,255,77,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(0,158,23,0.6)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_RESERVANACIONALBELLOTOSDELMELADO_5');
+        map.getPane('pane_RESERVANACIONALBELLOTOSDELMELADO_5').style.zIndex = 405;
+        map.getPane('pane_RESERVANACIONALBELLOTOSDELMELADO_5').style['mix-blend-mode'] = 'normal';
+        var layer_RESERVANACIONALBELLOTOSDELMELADO_5 = new L.geoJson(json_RESERVANACIONALBELLOTOSDELMELADO_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_RESERVANACIONALBELLOTOSDELMELADO_5',
+            layerName: 'layer_RESERVANACIONALBELLOTOSDELMELADO_5',
+            pane: 'pane_RESERVANACIONALBELLOTOSDELMELADO_5',
+            onEachFeature: pop_RESERVANACIONALBELLOTOSDELMELADO_5,
+            style: style_RESERVANACIONALBELLOTOSDELMELADO_5_0,
+        });
+        bounds_group.addLayer(layer_RESERVANACIONALBELLOTOSDELMELADO_5);
+        map.addLayer(layer_RESERVANACIONALBELLOTOSDELMELADO_5);
+        function pop_SITIOSPRIORIDADSNASPE_6(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">NOMBRE</th>\
+                        <td>' + (feature.properties['NOMBRE'] !== null ? autolinker.link(feature.properties['NOMBRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TIPO</th>\
+                        <td>' + (feature.properties['TIPO'] !== null ? autolinker.link(feature.properties['TIPO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PROTECCIÓ</th>\
+                        <td>' + (feature.properties['PROTECCIÓ'] !== null ? autolinker.link(feature.properties['PROTECCIÓ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FECHA</th>\
+                        <td>' + (feature.properties['FECHA'] !== null ? autolinker.link(feature.properties['FECHA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ÁREA(Km2)</th>\
+                        <td>' + (feature.properties['ÁREA(Km2)'] !== null ? autolinker.link(feature.properties['ÁREA(Km2)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FUENTE</th>\
+                        <td>' + (feature.properties['FUENTE'] !== null ? autolinker.link(feature.properties['FUENTE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_SITIOSPRIORIDADSNASPE_6_0() {
+            return {
+                pane: 'pane_SITIOSPRIORIDADSNASPE_6',
+                opacity: 1,
+                color: 'rgba(255,255,44,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(149,255,35,0.6)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_SITIOSPRIORIDADSNASPE_6');
+        map.getPane('pane_SITIOSPRIORIDADSNASPE_6').style.zIndex = 406;
+        map.getPane('pane_SITIOSPRIORIDADSNASPE_6').style['mix-blend-mode'] = 'normal';
+        var layer_SITIOSPRIORIDADSNASPE_6 = new L.geoJson(json_SITIOSPRIORIDADSNASPE_6, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_SITIOSPRIORIDADSNASPE_6',
+            layerName: 'layer_SITIOSPRIORIDADSNASPE_6',
+            pane: 'pane_SITIOSPRIORIDADSNASPE_6',
+            onEachFeature: pop_SITIOSPRIORIDADSNASPE_6,
+            style: style_SITIOSPRIORIDADSNASPE_6_0,
+        });
+        bounds_group.addLayer(layer_SITIOSPRIORIDADSNASPE_6);
+        function pop_SENDEROS_7(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">NOM</th>\
+                        <td>' + (feature.properties['NOM'] !== null ? autolinker.link(feature.properties['NOM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DIFICULTAD</th>\
+                        <td>' + (feature.properties['DIFICULTAD'] !== null ? autolinker.link(feature.properties['DIFICULTAD'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DISTANCIA '] !== null ? autolinker.link(feature.properties['DISTANCIA '].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TIPO</th>\
+                        <td>' + (feature.properties['TIPO'] !== null ? autolinker.link(feature.properties['TIPO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COD'] !== null ? autolinker.link(feature.properties['COD'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DESCRIP</th>\
+                        <td>' + (feature.properties['DESCRIP'] !== null ? autolinker.link(feature.properties['DESCRIP'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_SENDEROS_7_0() {
+            return {
+                pane: 'pane_SENDEROS_7',
+                opacity: 1,
+                color: 'rgba(255,133,113,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_SENDEROS_7');
+        map.getPane('pane_SENDEROS_7').style.zIndex = 407;
+        map.getPane('pane_SENDEROS_7').style['mix-blend-mode'] = 'normal';
+        var layer_SENDEROS_7 = new L.geoJson(json_SENDEROS_7, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_SENDEROS_7',
+            layerName: 'layer_SENDEROS_7',
+            pane: 'pane_SENDEROS_7',
+            onEachFeature: pop_SENDEROS_7,
+            style: style_SENDEROS_7_0,
+        });
+        bounds_group.addLayer(layer_SENDEROS_7);
+        map.addLayer(layer_SENDEROS_7);
+        function pop_Senderos_WP_8(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">ALTURA</th>\
+                        <td>' + (feature.properties['ALTURA'] !== null ? autolinker.link(feature.properties['ALTURA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NOM</th>\
+                        <td>' + (feature.properties['NOM'] !== null ? autolinker.link(feature.properties['NOM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TIPO</th>\
+                        <td>' + (feature.properties['TIPO'] !== null ? autolinker.link(feature.properties['TIPO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COD'] !== null ? autolinker.link(feature.properties['COD'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Senderos_WP_8_0(feature) {
+            switch(String(feature.properties['TIPO'])) {
+                case 'Arbol':
+                    return {
+                pane: 'pane_Senderos_WP_8',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/FLORA_1.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Camino':
+                    return {
+                pane: 'pane_Senderos_WP_8',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/PATH.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Cumbre':
+                    return {
+                pane: 'pane_Senderos_WP_8',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/MONTAÑA.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Intersección':
+                    return {
+                pane: 'pane_Senderos_WP_8',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/INTERSECTIO.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Panorámica':
+                    return {
+                pane: 'pane_Senderos_WP_8',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/MIRADOR_1.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Rio / Arroyo':
+                    return {
+                pane: 'pane_Senderos_WP_8',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/RIO_1.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Yacimiento Arq':
+                    return {
+                pane: 'pane_Senderos_WP_8',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/ARQUEO_1.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_Senderos_WP_8');
+        map.getPane('pane_Senderos_WP_8').style.zIndex = 408;
+        map.getPane('pane_Senderos_WP_8').style['mix-blend-mode'] = 'normal';
+        var layer_Senderos_WP_8 = new L.geoJson(json_Senderos_WP_8, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Senderos_WP_8',
+            layerName: 'layer_Senderos_WP_8',
+            pane: 'pane_Senderos_WP_8',
+            onEachFeature: pop_Senderos_WP_8,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_Senderos_WP_8_0(feature));
+            },
+        });
+        var cluster_Senderos_WP_8 = new L.MarkerClusterGroup({showCoverageOnHover: false,
+            spiderfyDistanceMultiplier: 2});
+        cluster_Senderos_WP_8.addLayer(layer_Senderos_WP_8);
+
+        bounds_group.addLayer(layer_Senderos_WP_8);
+        cluster_Senderos_WP_8.addTo(map);
+        function pop_FAUNAYBIODIVERSIDAD_9(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NOMBRE</th>\
+                        <td>' + (feature.properties['NOMBRE'] !== null ? autolinker.link(feature.properties['NOMBRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TIPO</th>\
+                        <td>' + (feature.properties['TIPO'] !== null ? autolinker.link(feature.properties['TIPO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FUENTE</th>\
+                        <td>' + (feature.properties['FUENTE'] !== null ? autolinker.link(feature.properties['FUENTE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_FAUNAYBIODIVERSIDAD_9_0() {
+            return {
+                pane: 'pane_FAUNAYBIODIVERSIDAD_9',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/Fauna y flroa.svg',
+            iconSize: [23.0, 23.0]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_FAUNAYBIODIVERSIDAD_9');
+        map.getPane('pane_FAUNAYBIODIVERSIDAD_9').style.zIndex = 409;
+        map.getPane('pane_FAUNAYBIODIVERSIDAD_9').style['mix-blend-mode'] = 'normal';
+        var layer_FAUNAYBIODIVERSIDAD_9 = new L.geoJson(json_FAUNAYBIODIVERSIDAD_9, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_FAUNAYBIODIVERSIDAD_9',
+            layerName: 'layer_FAUNAYBIODIVERSIDAD_9',
+            pane: 'pane_FAUNAYBIODIVERSIDAD_9',
+            onEachFeature: pop_FAUNAYBIODIVERSIDAD_9,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_FAUNAYBIODIVERSIDAD_9_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_FAUNAYBIODIVERSIDAD_9);
+        function pop_HIDROGRAFA_10(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['objectid'] !== null ? autolinker.link(feature.properties['objectid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NOMBRE</th>\
+                        <td>' + (feature.properties['NOMBRE'] !== null ? autolinker.link(feature.properties['NOMBRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TIPO</th>\
+                        <td>' + (feature.properties['TIPO'] !== null ? autolinker.link(feature.properties['TIPO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">REGION</th>\
+                        <td>' + (feature.properties['REGION'] !== null ? autolinker.link(feature.properties['REGION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">COMUNA</th>\
+                        <td>' + (feature.properties['COMUNA'] !== null ? autolinker.link(feature.properties['COMUNA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">LONG(Km)</th>\
+                        <td>' + (feature.properties['LONG(Km)'] !== null ? autolinker.link(feature.properties['LONG(Km)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FUENTE</th>\
+                        <td>' + (feature.properties['FUENTE'] !== null ? autolinker.link(feature.properties['FUENTE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_HIDROGRAFA_10_0(feature) {
+            switch(String(feature.properties['TIPO'])) {
+                case 'Quebrada':
+                    return {
+                pane: 'pane_HIDROGRAFA_10',
+                opacity: 1,
+                color: 'rgba(161,218,255,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Estero':
+                    return {
+                pane: 'pane_HIDROGRAFA_10',
+                opacity: 1,
+                color: 'rgba(54,141,255,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Río':
+                    return {
+                pane: 'pane_HIDROGRAFA_10',
+                opacity: 1,
+                color: 'rgba(31,120,180,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_HIDROGRAFA_10');
+        map.getPane('pane_HIDROGRAFA_10').style.zIndex = 410;
+        map.getPane('pane_HIDROGRAFA_10').style['mix-blend-mode'] = 'normal';
+        var layer_HIDROGRAFA_10 = new L.geoJson(json_HIDROGRAFA_10, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_HIDROGRAFA_10',
+            layerName: 'layer_HIDROGRAFA_10',
+            pane: 'pane_HIDROGRAFA_10',
+            onEachFeature: pop_HIDROGRAFA_10,
+            style: style_HIDROGRAFA_10_0,
+        });
+        bounds_group.addLayer(layer_HIDROGRAFA_10);
+        map.addLayer(layer_HIDROGRAFA_10);
+        function pop_MASASLACUSTRES_11(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['objectid'] !== null ? autolinker.link(feature.properties['objectid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NOMBRE</th>\
+                        <td>' + (feature.properties['NOMBRE'] !== null ? autolinker.link(feature.properties['NOMBRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TIPO</th>\
+                        <td>' + (feature.properties['TIPO'] !== null ? autolinker.link(feature.properties['TIPO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">AREA(km)</th>\
+                        <td>' + (feature.properties['AREA(km)'] !== null ? autolinker.link(feature.properties['AREA(km)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FUENTE</th>\
+                        <td>' + (feature.properties['FUENTE'] !== null ? autolinker.link(feature.properties['FUENTE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_MASASLACUSTRES_11_0() {
+            return {
+                pane: 'pane_MASASLACUSTRES_11',
+                opacity: 1,
+                color: 'rgba(31,120,180,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(166,206,227,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_MASASLACUSTRES_11');
+        map.getPane('pane_MASASLACUSTRES_11').style.zIndex = 411;
+        map.getPane('pane_MASASLACUSTRES_11').style['mix-blend-mode'] = 'normal';
+        var layer_MASASLACUSTRES_11 = new L.geoJson(json_MASASLACUSTRES_11, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_MASASLACUSTRES_11',
+            layerName: 'layer_MASASLACUSTRES_11',
+            pane: 'pane_MASASLACUSTRES_11',
+            onEachFeature: pop_MASASLACUSTRES_11,
+            style: style_MASASLACUSTRES_11_0,
+        });
+        bounds_group.addLayer(layer_MASASLACUSTRES_11);
+        map.addLayer(layer_MASASLACUSTRES_11);
+        function pop_INFRAESTRUCTURACANALES_12(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['objectid'] !== null ? autolinker.link(feature.properties['objectid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NOMBRE</th>\
+                        <td>' + (feature.properties['NOMBRE'] !== null ? autolinker.link(feature.properties['NOMBRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FUENTE</th>\
+                        <td>' + (feature.properties['FUENTE'] !== null ? autolinker.link(feature.properties['FUENTE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TIPO</th>\
+                        <td>' + (feature.properties['TIPO'] !== null ? autolinker.link(feature.properties['TIPO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">LONG (km)</th>\
+                        <td>' + (feature.properties['LONG (km)'] !== null ? autolinker.link(feature.properties['LONG (km)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_INFRAESTRUCTURACANALES_12_0() {
+            return {
+                pane: 'pane_INFRAESTRUCTURACANALES_12',
+                opacity: 1,
+                color: 'rgba(31,120,180,1.0)',
+                dashArray: '10,5,1,5',
+                lineCap: 'round',
+                lineJoin: 'round',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_INFRAESTRUCTURACANALES_12');
+        map.getPane('pane_INFRAESTRUCTURACANALES_12').style.zIndex = 412;
+        map.getPane('pane_INFRAESTRUCTURACANALES_12').style['mix-blend-mode'] = 'normal';
+        var layer_INFRAESTRUCTURACANALES_12 = new L.geoJson(json_INFRAESTRUCTURACANALES_12, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_INFRAESTRUCTURACANALES_12',
+            layerName: 'layer_INFRAESTRUCTURACANALES_12',
+            pane: 'pane_INFRAESTRUCTURACANALES_12',
+            onEachFeature: pop_INFRAESTRUCTURACANALES_12,
+            style: style_INFRAESTRUCTURACANALES_12_0,
+        });
+        bounds_group.addLayer(layer_INFRAESTRUCTURACANALES_12);
+        function pop_REDVIARIA_13(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">NOMBRE</th>\
+                        <td>' + (feature.properties['NOMBRE'] !== null ? autolinker.link(feature.properties['NOMBRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ROL</th>\
+                        <td>' + (feature.properties['ROL'] !== null ? autolinker.link(feature.properties['ROL'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">CLASE</th>\
+                        <td>' + (feature.properties['CLASE'] !== null ? autolinker.link(feature.properties['CLASE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TIPO</th>\
+                        <td>' + (feature.properties['TIPO'] !== null ? autolinker.link(feature.properties['TIPO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">CATEGORÍA</th>\
+                        <td>' + (feature.properties['CATEGORÍA'] !== null ? autolinker.link(feature.properties['CATEGORÍA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">COD-REGIÓ</th>\
+                        <td>' + (feature.properties['COD-REGIÓ'] !== null ? autolinker.link(feature.properties['COD-REGIÓ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">LONG(Km)</th>\
+                        <td>' + (feature.properties['LONG(Km)'] !== null ? autolinker.link(feature.properties['LONG(Km)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FUENTE</th>\
+                        <td>' + (feature.properties['FUENTE'] !== null ? autolinker.link(feature.properties['FUENTE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_REDVIARIA_13_0(feature) {
+            switch(String(feature.properties['TIPO'])) {
+                case 'Pavimento':
+                    return {
+                pane: 'pane_REDVIARIA_13',
+                opacity: 1,
+                color: 'rgba(255,85,0,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Ripio':
+                    return {
+                pane: 'pane_REDVIARIA_13',
+                opacity: 1,
+                color: 'rgba(252,164,0,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Tierra':
+                    return {
+                pane: 'pane_REDVIARIA_13',
+                opacity: 1,
+                color: 'rgba(235,255,42,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_REDVIARIA_13');
+        map.getPane('pane_REDVIARIA_13').style.zIndex = 413;
+        map.getPane('pane_REDVIARIA_13').style['mix-blend-mode'] = 'normal';
+        var layer_REDVIARIA_13 = new L.geoJson(json_REDVIARIA_13, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_REDVIARIA_13',
+            layerName: 'layer_REDVIARIA_13',
+            pane: 'pane_REDVIARIA_13',
+            onEachFeature: pop_REDVIARIA_13,
+            style: style_REDVIARIA_13_0,
+        });
+        bounds_group.addLayer(layer_REDVIARIA_13);
+        map.addLayer(layer_REDVIARIA_13);
+        function pop_Servicios_SIGANCOA_14(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NOM</th>\
+                        <td>' + (feature.properties['NOM'] !== null ? autolinker.link(feature.properties['NOM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TIPO</th>\
+                        <td>' + (feature.properties['TIPO'] !== null ? autolinker.link(feature.properties['TIPO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SECTOR</th>\
+                        <td>' + (feature.properties['SECTOR'] !== null ? autolinker.link(feature.properties['SECTOR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FECHA</th>\
+                        <td>' + (feature.properties['FECHA'] !== null ? autolinker.link(feature.properties['FECHA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DESCRIP</th>\
+                        <td>' + (feature.properties['DESCRIP'] !== null ? autolinker.link(feature.properties['DESCRIP'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FOTO'] !== null ? autolinker.link(feature.properties['FOTO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Servicios_SIGANCOA_14_0(feature) {
+            switch(String(feature.properties['TIPO'])) {
+                case 'Alimentacion Independiente':
+                    return {
+                pane: 'pane_Servicios_SIGANCOA_14',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/AlimentacionInd.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Almacen Alimenticio':
+                    return {
+                pane: 'pane_Servicios_SIGANCOA_14',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/Almacen.svg',
+            iconSize: [23.0, 23.0]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Alojamiento Turístico':
+                    return {
+                pane: 'pane_Servicios_SIGANCOA_14',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/HRural.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Artesania':
+                    return {
+                pane: 'pane_Servicios_SIGANCOA_14',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/Artesania.svg',
+            iconSize: [23.0, 23.0]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Caja Vecina':
+                    return {
+                pane: 'pane_Servicios_SIGANCOA_14',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/Caja Vecina.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Hotel':
+                    return {
+                pane: 'pane_Servicios_SIGANCOA_14',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/Hotel.svg',
+            iconSize: [23.0, 23.0]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Materiales de Construccion':
+                    return {
+                pane: 'pane_Servicios_SIGANCOA_14',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/noun_Construction_593642.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Otros':
+                    return {
+                pane: 'pane_Servicios_SIGANCOA_14',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/poi_embassy.svg',
+            iconSize: [23.0, 23.0]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Restaurante':
+                    return {
+                pane: 'pane_Servicios_SIGANCOA_14',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/Restauran.svg',
+            iconSize: [23.0, 23.0]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Cabañas':
+                    return {
+                pane: 'pane_Servicios_SIGANCOA_14',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/cabaña.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Camping':
+                    return {
+                pane: 'pane_Servicios_SIGANCOA_14',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/Camping.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_Servicios_SIGANCOA_14');
+        map.getPane('pane_Servicios_SIGANCOA_14').style.zIndex = 414;
+        map.getPane('pane_Servicios_SIGANCOA_14').style['mix-blend-mode'] = 'normal';
+        var layer_Servicios_SIGANCOA_14 = new L.geoJson(json_Servicios_SIGANCOA_14, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Servicios_SIGANCOA_14',
+            layerName: 'layer_Servicios_SIGANCOA_14',
+            pane: 'pane_Servicios_SIGANCOA_14',
+            onEachFeature: pop_Servicios_SIGANCOA_14,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_Servicios_SIGANCOA_14_0(feature));
+            },
+        });
+        var cluster_Servicios_SIGANCOA_14 = new L.MarkerClusterGroup({showCoverageOnHover: false,
+            spiderfyDistanceMultiplier: 2});
+        cluster_Servicios_SIGANCOA_14.addLayer(layer_Servicios_SIGANCOA_14);
+
+        bounds_group.addLayer(layer_Servicios_SIGANCOA_14);
+        function pop_Equipamientos_SIGANCOA_15(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NOM</th>\
+                        <td>' + (feature.properties['NOM'] !== null ? autolinker.link(feature.properties['NOM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TIPO</th>\
+                        <td>' + (feature.properties['TIPO'] !== null ? autolinker.link(feature.properties['TIPO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SECTOR</th>\
+                        <td>' + (feature.properties['SECTOR'] !== null ? autolinker.link(feature.properties['SECTOR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DESCRIP</th>\
+                        <td>' + (feature.properties['DESCRIP'] !== null ? autolinker.link(feature.properties['DESCRIP'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FECHA</th>\
+                        <td>' + (feature.properties['FECHA'] !== null ? autolinker.link(feature.properties['FECHA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FOTO'] !== null ? autolinker.link(feature.properties['FOTO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Equipamientos_SIGANCOA_15_0(feature) {
+            switch(String(feature.properties['TIPO'])) {
+                case 'APR':
+                    return {
+                pane: 'pane_Equipamientos_SIGANCOA_15',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/APR.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Carabineros':
+                    return {
+                pane: 'pane_Equipamientos_SIGANCOA_15',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/Carabineros.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Centro Educativo':
+                    return {
+                pane: 'pane_Equipamientos_SIGANCOA_15',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/noun_education_1433791.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Centro Médico':
+                    return {
+                pane: 'pane_Equipamientos_SIGANCOA_15',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/1Aux.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Deportivo':
+                    return {
+                pane: 'pane_Equipamientos_SIGANCOA_15',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/deportivo.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Juntas Vecinales':
+                    return {
+                pane: 'pane_Equipamientos_SIGANCOA_15',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/Sede.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Paradas de Autobus':
+                    return {
+                pane: 'pane_Equipamientos_SIGANCOA_15',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/bus.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Religioso':
+                    return {
+                pane: 'pane_Equipamientos_SIGANCOA_15',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/Iglesia.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_Equipamientos_SIGANCOA_15');
+        map.getPane('pane_Equipamientos_SIGANCOA_15').style.zIndex = 415;
+        map.getPane('pane_Equipamientos_SIGANCOA_15').style['mix-blend-mode'] = 'normal';
+        var layer_Equipamientos_SIGANCOA_15 = new L.geoJson(json_Equipamientos_SIGANCOA_15, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Equipamientos_SIGANCOA_15',
+            layerName: 'layer_Equipamientos_SIGANCOA_15',
+            pane: 'pane_Equipamientos_SIGANCOA_15',
+            onEachFeature: pop_Equipamientos_SIGANCOA_15,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_Equipamientos_SIGANCOA_15_0(feature));
+            },
+        });
+        var cluster_Equipamientos_SIGANCOA_15 = new L.MarkerClusterGroup({showCoverageOnHover: false,
+            spiderfyDistanceMultiplier: 2});
+        cluster_Equipamientos_SIGANCOA_15.addLayer(layer_Equipamientos_SIGANCOA_15);
+
+        bounds_group.addLayer(layer_Equipamientos_SIGANCOA_15);
+        function pop_INFRAESTRUCTURADOH_16(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">REGION</th>\
+                        <td>' + (feature.properties['REGION'] !== null ? autolinker.link(feature.properties['REGION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NOMBRE</th>\
+                        <td>' + (feature.properties['NOMBRE'] !== null ? autolinker.link(feature.properties['NOMBRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FECHA</th>\
+                        <td>' + (feature.properties['FECHA'] !== null ? autolinker.link(feature.properties['FECHA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">COMUNA</th>\
+                        <td>' + (feature.properties['COMUNA'] !== null ? autolinker.link(feature.properties['COMUNA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">INSTI</th>\
+                        <td>' + (feature.properties['INSTI'] !== null ? autolinker.link(feature.properties['INSTI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PROPIET</th>\
+                        <td>' + (feature.properties['PROPIET'] !== null ? autolinker.link(feature.properties['PROPIET'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TIPO</th>\
+                        <td>' + (feature.properties['TIPO'] !== null ? autolinker.link(feature.properties['TIPO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FUENTE</th>\
+                        <td>' + (feature.properties['FUENTE'] !== null ? autolinker.link(feature.properties['FUENTE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_INFRAESTRUCTURADOH_16_0(feature) {
+            switch(String(feature.properties['TIPO'])) {
+                case 'Electricidad':
+                    return {
+                pane: 'pane_INFRAESTRUCTURADOH_16',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/poi_tower_power.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Puente':
+                    return {
+                pane: 'pane_INFRAESTRUCTURADOH_16',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/amenity_bench.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Riego':
+                    return {
+                pane: 'pane_INFRAESTRUCTURADOH_16',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/tranque.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Riego y Electricidad':
+                    return {
+                pane: 'pane_INFRAESTRUCTURADOH_16',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/tranque.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_INFRAESTRUCTURADOH_16');
+        map.getPane('pane_INFRAESTRUCTURADOH_16').style.zIndex = 416;
+        map.getPane('pane_INFRAESTRUCTURADOH_16').style['mix-blend-mode'] = 'normal';
+        var layer_INFRAESTRUCTURADOH_16 = new L.geoJson(json_INFRAESTRUCTURADOH_16, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_INFRAESTRUCTURADOH_16',
+            layerName: 'layer_INFRAESTRUCTURADOH_16',
+            pane: 'pane_INFRAESTRUCTURADOH_16',
+            onEachFeature: pop_INFRAESTRUCTURADOH_16,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_INFRAESTRUCTURADOH_16_0(feature));
+            },
+        });
+        var cluster_INFRAESTRUCTURADOH_16 = new L.MarkerClusterGroup({showCoverageOnHover: false,
+            spiderfyDistanceMultiplier: 2});
+        cluster_INFRAESTRUCTURADOH_16.addLayer(layer_INFRAESTRUCTURADOH_16);
+
+        bounds_group.addLayer(layer_INFRAESTRUCTURADOH_16);
+        cluster_INFRAESTRUCTURADOH_16.addTo(map);
+        function pop_TOPONIMIAS_17(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['objectid'] !== null ? autolinker.link(feature.properties['objectid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NOMBRE</th>\
+                        <td>' + (feature.properties['NOMBRE'] !== null ? autolinker.link(feature.properties['NOMBRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TIPO</th>\
+                        <td>' + (feature.properties['TIPO'] !== null ? autolinker.link(feature.properties['TIPO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">COMUNA</th>\
+                        <td>' + (feature.properties['COMUNA'] !== null ? autolinker.link(feature.properties['COMUNA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">REGIÓN</th>\
+                        <td>' + (feature.properties['REGIÓN'] !== null ? autolinker.link(feature.properties['REGIÓN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ALT</th>\
+                        <td>' + (feature.properties['ALT'] !== null ? autolinker.link(feature.properties['ALT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FUENTE</th>\
+                        <td>' + (feature.properties['FUENTE'] !== null ? autolinker.link(feature.properties['FUENTE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_TOPONIMIAS_17_0(feature) {
+            switch(String(feature.properties['TIPO'])) {
+                case 'Centro Poblado':
+                    return {
+                pane: 'pane_TOPONIMIAS_17',
+        rotationAngle: -0.043633250000000005,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/cp.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Elementos del Relieve':
+                    return {
+                pane: 'pane_TOPONIMIAS_17',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/MONTAÑA.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Localidad o Area':
+                    return {
+                pane: 'pane_TOPONIMIAS_17',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/cp.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Masa Lacustre':
+                    return {
+                pane: 'pane_TOPONIMIAS_17',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/lago.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+                case 'Red Hidrografica':
+                    return {
+                pane: 'pane_TOPONIMIAS_17',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/RIO_1.svg',
+            iconSize: [26.599999999999998, 26.599999999999998]
+        }),
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_TOPONIMIAS_17');
+        map.getPane('pane_TOPONIMIAS_17').style.zIndex = 417;
+        map.getPane('pane_TOPONIMIAS_17').style['mix-blend-mode'] = 'normal';
+        var layer_TOPONIMIAS_17 = new L.geoJson(json_TOPONIMIAS_17, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_TOPONIMIAS_17',
+            layerName: 'layer_TOPONIMIAS_17',
+            pane: 'pane_TOPONIMIAS_17',
+            onEachFeature: pop_TOPONIMIAS_17,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_TOPONIMIAS_17_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_TOPONIMIAS_17);
+        map.addLayer(layer_TOPONIMIAS_17);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var baseMaps = {Stamen_Terrain, Esri_WorldImagery};
+        var capas = {'TOPONIMIAS<br /><table><tr><td style="text-align: center;"><img src="legend/TOPONIMIAS_17_CentroPoblado0.png" /></td><td>Centro Poblado</td></tr><tr><td style="text-align: center;"><img src="legend/TOPONIMIAS_17_ElementosdelRelieve1.png" /></td><td>Elementos del Relieve</td></tr><tr><td style="text-align: center;"><img src="legend/TOPONIMIAS_17_LocalidadoArea2.png" /></td><td>Localidad o Area</td></tr><tr><td style="text-align: center;"><img src="legend/TOPONIMIAS_17_MasaLacustre3.png" /></td><td>Masa Lacustre</td></tr><tr><td style="text-align: center;"><img src="legend/TOPONIMIAS_17_RedHidrografica4.png" /></td><td>Red Hidrografica</td></tr></table>': layer_TOPONIMIAS_17,'INFRAESTRUCTURA DOH<br /><table><tr><td style="text-align: center;"><img src="legend/INFRAESTRUCTURADOH_16_Electricidad0.png" /></td><td>Electricidad</td></tr><tr><td style="text-align: center;"><img src="legend/INFRAESTRUCTURADOH_16_Puente1.png" /></td><td>Puente</td></tr><tr><td style="text-align: center;"><img src="legend/INFRAESTRUCTURADOH_16_Riego2.png" /></td><td>Riego</td></tr><tr><td style="text-align: center;"><img src="legend/INFRAESTRUCTURADOH_16_RiegoyElectricidad3.png" /></td><td>Riego y Electricidad</td></tr></table>': cluster_INFRAESTRUCTURADOH_16,'Equipamientos_SIGANCOA<br /><table><tr><td style="text-align: center;"><img src="legend/Equipamientos_SIGANCOA_15_APR0.png" /></td><td>APR</td></tr><tr><td style="text-align: center;"><img src="legend/Equipamientos_SIGANCOA_15_Carabineros1.png" /></td><td>Carabineros</td></tr><tr><td style="text-align: center;"><img src="legend/Equipamientos_SIGANCOA_15_CentroEducativo2.png" /></td><td>Centro Educativo</td></tr><tr><td style="text-align: center;"><img src="legend/Equipamientos_SIGANCOA_15_CentroMédico3.png" /></td><td>Centro Médico</td></tr><tr><td style="text-align: center;"><img src="legend/Equipamientos_SIGANCOA_15_Deportivo4.png" /></td><td>Deportivo</td></tr><tr><td style="text-align: center;"><img src="legend/Equipamientos_SIGANCOA_15_JuntasVecinales5.png" /></td><td>Juntas Vecinales</td></tr><tr><td style="text-align: center;"><img src="legend/Equipamientos_SIGANCOA_15_ParadasdeAutobus6.png" /></td><td>Paradas de Autobus</td></tr><tr><td style="text-align: center;"><img src="legend/Equipamientos_SIGANCOA_15_Religioso7.png" /></td><td>Religioso</td></tr></table>': cluster_Equipamientos_SIGANCOA_15,'Servicios_SIGANCOA<br /><table><tr><td style="text-align: center;"><img src="legend/Servicios_SIGANCOA_14_AlimentacionIndependiente0.png" /></td><td>Alimentacion Independiente</td></tr><tr><td style="text-align: center;"><img src="legend/Servicios_SIGANCOA_14_AlmacenAlimenticio1.png" /></td><td>Almacen Alimenticio</td></tr><tr><td style="text-align: center;"><img src="legend/Servicios_SIGANCOA_14_AlojamientoTurístico2.png" /></td><td>Alojamiento Turístico</td></tr><tr><td style="text-align: center;"><img src="legend/Servicios_SIGANCOA_14_Artesania3.png" /></td><td>Artesania</td></tr><tr><td style="text-align: center;"><img src="legend/Servicios_SIGANCOA_14_CajaVecina4.png" /></td><td>Caja Vecina</td></tr><tr><td style="text-align: center;"><img src="legend/Servicios_SIGANCOA_14_Hotel5.png" /></td><td>Hotel</td></tr><tr><td style="text-align: center;"><img src="legend/Servicios_SIGANCOA_14_MaterialesdeConstruccion6.png" /></td><td>Materiales de Construccion</td></tr><tr><td style="text-align: center;"><img src="legend/Servicios_SIGANCOA_14_Otros7.png" /></td><td>Otros</td></tr><tr><td style="text-align: center;"><img src="legend/Servicios_SIGANCOA_14_Restaurante8.png" /></td><td>Restaurante</td></tr><tr><td style="text-align: center;"><img src="legend/Servicios_SIGANCOA_14_Cabañas9.png" /></td><td>Cabañas</td></tr><tr><td style="text-align: center;"><img src="legend/Servicios_SIGANCOA_14_Camping10.png" /></td><td>Camping</td></tr></table>': cluster_Servicios_SIGANCOA_14,'RED VIARIA<br /><table><tr><td style="text-align: center;"><img src="legend/REDVIARIA_13_Pavimento0.png" /></td><td>Pavimento</td></tr><tr><td style="text-align: center;"><img src="legend/REDVIARIA_13_Ripio1.png" /></td><td>Ripio</td></tr><tr><td style="text-align: center;"><img src="legend/REDVIARIA_13_Tierra2.png" /></td><td>Tierra</td></tr></table>': layer_REDVIARIA_13,'<img src="legend/INFRAESTRUCTURACANALES_12.png" /> INFRAESTRUCTURA CANALES': layer_INFRAESTRUCTURACANALES_12,'<img src="legend/MASASLACUSTRES_11.png" /> MASAS LACUSTRES': layer_MASASLACUSTRES_11,'HIDROGRAFÍA<br /><table><tr><td style="text-align: center;"><img src="legend/HIDROGRAFA_10_Quebrada0.png" /></td><td>Quebrada</td></tr><tr><td style="text-align: center;"><img src="legend/HIDROGRAFA_10_Estero1.png" /></td><td>Estero</td></tr><tr><td style="text-align: center;"><img src="legend/HIDROGRAFA_10_Río2.png" /></td><td>Río</td></tr></table>': layer_HIDROGRAFA_10,'<img src="legend/FAUNAYBIODIVERSIDAD_9.png" /> FAUNA Y BIODIVERSIDAD': layer_FAUNAYBIODIVERSIDAD_9,'Senderos_WP<br /><table><tr><td style="text-align: center;"><img src="legend/Senderos_WP_8_Arbol0.png" /></td><td>Arbol</td></tr><tr><td style="text-align: center;"><img src="legend/Senderos_WP_8_Camino1.png" /></td><td>Camino</td></tr><tr><td style="text-align: center;"><img src="legend/Senderos_WP_8_Cumbre2.png" /></td><td>Cumbre</td></tr><tr><td style="text-align: center;"><img src="legend/Senderos_WP_8_Intersección3.png" /></td><td>Intersección</td></tr><tr><td style="text-align: center;"><img src="legend/Senderos_WP_8_Panorámica4.png" /></td><td>Panorámica</td></tr><tr><td style="text-align: center;"><img src="legend/Senderos_WP_8_RioArroyo5.png" /></td><td>Rio / Arroyo</td></tr><tr><td style="text-align: center;"><img src="legend/Senderos_WP_8_YacimientoArq6.png" /></td><td>Yacimiento Arq</td></tr></table>': cluster_Senderos_WP_8,'<img src="legend/SENDEROS_7.png" /> SENDEROS': layer_SENDEROS_7,'<img src="legend/SITIOSPRIORIDADSNASPE_6.png" /> SITIOS PRIORIDAD (SNASPE)': layer_SITIOSPRIORIDADSNASPE_6,'<img src="legend/RESERVANACIONALBELLOTOSDELMELADO_5.png" /> RESERVA NACIONAL BELLOTOS DEL MELADO': layer_RESERVANACIONALBELLOTOSDELMELADO_5,'<img src="legend/LMITESCOMUNALES_4.png" /> LÍMITES COMUNALES': layer_LMITESCOMUNALES_4,'<img src="legend/CUENCARIOANCOA_3.png" /> CUENCA RIO ANCOA': layer_CUENCARIOANCOA_3,'CATASTRO NOTHOFAGUS<br /><table><tr><td style="text-align: center;"><img src="legend/CATASTRONOTHOFAGUS_2_Nothofagusalpina0.png" /></td><td>Nothofagus alpina</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTRONOTHOFAGUS_2_Nothofagusdombeyi1.png" /></td><td>Nothofagus dombeyi</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTRONOTHOFAGUS_2_Nothofagusglauca2.png" /></td><td>Nothofagus glauca</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTRONOTHOFAGUS_2_Nothofagusobliqua3.png" /></td><td>Nothofagus obliqua</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTRONOTHOFAGUS_2_Nothofaguspumilio4.png" /></td><td>Nothofagus pumilio</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTRONOTHOFAGUS_2_5.png" /></td><td></td></tr></table>': layer_CATASTRONOTHOFAGUS_2,'CATASTRO USO<br /><table><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_AfloramientosRocosos0.png" /></td><td>Afloramientos Rocosos</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_BosqueNativoAchaparradoAbierto1.png" /></td><td>Bosque Nativo Achaparrado Abierto</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_BosqueNativoAchaparradoDenso2.png" /></td><td>Bosque Nativo Achaparrado Denso</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_BosqueNativoAchaparradoSemidenso3.png" /></td><td>Bosque Nativo Achaparrado Semidenso</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_BosqueNativoAdultoDenso4.png" /></td><td>Bosque Nativo Adulto Denso</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_BosqueNativoAdultoRenovalDenso5.png" /></td><td>Bosque Nativo Adulto-Renoval Denso</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_BosqueNativoAdultoRenovalSemidenso6.png" /></td><td>Bosque Nativo Adulto-Renoval Semidenso</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_BosqueNativoconExóticasAsilvestradasDenso7.png" /></td><td>Bosque Nativo con Exóticas Asilvestradas Denso</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_BosqueNativoconExóticasAsilvestradasSemidenso8.png" /></td><td>Bosque Nativo con Exóticas Asilvestradas Semidenso</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_BosqueNativoRenovalAbierto9.png" /></td><td>Bosque Nativo Renoval Abierto</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_BosqueNativoRenovalDenso10.png" /></td><td>Bosque Nativo Renoval Denso</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_BosqueNativoRenovalSemidenso11.png" /></td><td>Bosque Nativo Renoval Semidenso</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_BosqueNativoPlantaciónSemidenso12.png" /></td><td>Bosque Nativo-Plantación Semidenso</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_CajasdeRíos13.png" /></td><td>Cajas de Rí­os</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_CiudadesPueblosZonasIndustriales14.png" /></td><td>Ciudades, Pueblos, Zonas Industriales</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_CorridasdeLavasyEscoriales15.png" /></td><td>Corridas de Lavas y Escoriales</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_DerrumbesinVegetación16.png" /></td><td>Derrumbe sin Vegetación</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_EstepaAndinaCentral17.png" /></td><td>Estepa Andina Central</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_LagosLagunasEmbalsesTranques18.png" /></td><td>Lagos, Lagunas, Embalses, Tranques</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_MatorralAbierto19.png" /></td><td>Matorral Abierto</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_MatorralArborescenteAbierto20.png" /></td><td>Matorral Arborescente Abierto</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_MatorralArborescenteDenso21.png" /></td><td>Matorral Arborescente Denso</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_MatorralArborescenteSemidenso22.png" /></td><td>Matorral Arborescente Semidenso</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_MatorralDenso23.png" /></td><td>Matorral Denso</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_MatorralSemidenso24.png" /></td><td>Matorral Semidenso</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_MatorralPraderaAbierto25.png" /></td><td>Matorral-Pradera Abierto</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_MatorralPraderaSemidenso26.png" /></td><td>Matorral-Pradera Semidenso</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_MineríaIndustrial27.png" /></td><td>Minería Industrial</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_Nieves28.png" /></td><td>Nieves</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_OtrossinVegetación29.png" /></td><td>Otros sin Vegetación</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_PlantaciónAdulta30.png" /></td><td>Plantación Adulta</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_PlantaciónconExóticasAsilvestradas31.png" /></td><td>Plantación con Exóticas Asilvestradas</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_PlantaciónJovenoReciénCosechada32.png" /></td><td>Plantación Joven o Recién Cosechada</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_PraderasPerennes33.png" /></td><td>Praderas Perennes</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_Ríos34.png" /></td><td>Rí­os</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_RotaciónCultivoPradera35.png" /></td><td>Rotación Cultivo-Pradera</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_TerrenodeUsoAgrícola36.png" /></td><td>Terreno de Uso Agrí­cola</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_TerrenosobreelLímiteAltitudinaldelaVegetación37.png" /></td><td>Terreno sobre el Lí­mite Altitudinal de la Vegetación</td></tr><tr><td style="text-align: center;"><img src="legend/CATASTROUSO_1_38.png" /></td><td></td></tr></table>': layer_CATASTROUSO_1,'<img src="legend/CURVASDENIVEL100m_0.png" /> CURVAS DE NIVEL (100m)': layer_CURVASDENIVEL100m_0,};
+        L.control.layers(baseMaps,capas,{position: 'topleft',}).addTo(map);
+        setBounds();
+        var i = 0;
+        layer_HIDROGRAFA_10.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['NOMBRE'] !== null?String('<div style="color: #0058cd; font-size: 10pt; font-family: \'Liberation Sans Narrow\', sans-serif;">' + layer.feature.properties['NOMBRE']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_HIDROGRAFA_10'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_TOPONIMIAS_17.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['NOMBRE'] !== null?String('<div style="color: #fcfcfc; font-size: 12pt; font-family: \'Liberation Sans Narrow\', sans-serif;">' + layer.feature.properties['NOMBRE']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_TOPONIMIAS_17'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        map.addControl(new L.Control.Search({
+            layer: layer_TOPONIMIAS_17,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'NOMBRE'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+        resetLabels([layer_HIDROGRAFA_10,layer_TOPONIMIAS_17]);
+        map.on("zoomend", function(){
+            resetLabels([layer_HIDROGRAFA_10,layer_TOPONIMIAS_17]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_HIDROGRAFA_10,layer_TOPONIMIAS_17]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_HIDROGRAFA_10,layer_TOPONIMIAS_17]);
+        });
+        L.simpleMapScreenshoter({
+                // custom screenshot name
+                screenName: function () {
+                    return new Date().toDateString()
+                }
+            }).addTo(map);
+    L.Control.FileLayerLoad.LABEL = '<img class="icon" src="folder.svg" alt="file icon"/>';
+    var style = {
+            color: 'red',
+            opacity: 1.0,
+            fillOpacity: 1.0,
+            weight: 2,
+            clickable: false
+        };
+    var control = L.Control.fileLayerLoad({
+        layer: L.geoJson,
+        layerOptions: {
+                style: style,
+                pointToLayer: function (data, latlng) {
+                    return L.circleMarker(
+                        latlng,
+                        { style: style });}},
+       
+        addToMap: true,
+        fileSizeLimit: 1024,
+        formats: [
+            '.geojson',
+            '.gpx',
+            '.kml'
+        ]}).addTo(map);
+    var overlayMaps = {};
+    var layerswitcher= L.control.layers(overlayMaps).addTo(map);
+
+    
+    control.loader.on('data:loaded', function (event) {   
+      layerswitcher.addOverlay(event.layer, event.filename);
+    });
+
+  
+    control.loader.on('data:error', function (error) {
+       alert(error.error.message);
+    });
+        </script>
+
+    </body>
+</html>
